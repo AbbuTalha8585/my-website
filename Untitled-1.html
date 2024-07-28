@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGPA Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #5151b3;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 1500px;
+        }
+        .container {
+            background-color: rgb(178, 191, 232);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(1, 52, 234, 0.1);
+            width: 90%;
+            max-width: 400px;
+        }
+        h2 {
+            margin-top: 0;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #aa09fb62;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+            button {
+                padding: 8px;
+            }
+            h2 {
+                font-size: 1.5em;
+            }
+            .form-group label, .form-group input {
+                font-size: 1em;
+            }
+            .result {
+                font-size: 1em;
+            }
+        }
+        @media (min-width: 601px) and (max-width: 900px) {
+            .container {
+                width: 80%;
+                padding: 20px;
+            }
+            button {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>CGPA Calculator</h2>
+    <div id="courseInputs"></div>
+    <button onclick="calculateCGPA()">Calculate CGPA</button>
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+    const A = 9, S = 10, B = 8, C = 7, D = 6, E = 5, F = 0;
+    const numCourses = 8;
+    const validGrades = ['A', 'B', 'C', 'D', 'E', 'S', 'F'];
+
+    window.onload = function() {
+        const courseInputs = document.getElementById('courseInputs');
+        for (let i = 0; i < numCourses; ++i) {
+            courseInputs.innerHTML += `
+                <div class="form-group">
+                    <label for="grade${i}">Grade for course ${i + 1} (A, B, C, D, E, S, F):</label>
+                    <input type="text" id="grade${i}" maxlength="1" oninput="validateGrade(${i})" required>
+                </div>
+                <div class="form-group">
+                    <label for="credit${i}">Credit for course ${i + 1}:</label>
+                    <input type="number" id="credit${i}" min="0" step="1" oninput="validateCredit(${i})" required>
+                </div>
+            `;
+        }
+    };
+
+    function validateGrade(index) {
+        let input = document.getElementById(`grade${index}`);
+        let value = input.value.toUpperCase();
+
+        if (!validGrades.includes(value)) {
+            input.value = '';
+            document.getElementById('result').innerText = "Invalid grade entered. Please enter A, B, C, D, E, S, or F.";
+        } else {
+            document.getElementById('result').innerText = '';
+        }
+    }
+
+    function validateCredit(index) {
+        let input = document.getElementById(`credit${index}`);
+        let value = input.value;
+
+        if (isNaN(value) || value.includes('.') || value < 0) {
+            input.value = '';
+            document.getElementById('result').innerText = "Invalid credit entered. Please enter a positive integer.";
+        } else {
+            document.getElementById('result').innerText = '';
+        }
+    }
+
+    function calculateCGPA() {
+        let totalCreditPoints = 0;
+        let totalCredits = 0;
+        let cgpa = 0;
+
+        for (let i = 0; i < numCourses; ++i) {
+            let grade = document.getElementById(`grade${i}`).value.toUpperCase();
+            let credit = parseInt(document.getElementById(`credit${i}`).value);
+
+            let gradeValue;
+            switch (grade) {
+                case 'A':
+                    gradeValue = A;
+                    break;
+                case 'S':
+                    gradeValue = S;
+                    break;
+                case 'B':
+                    gradeValue = B;
+                    break;
+                case 'C':
+                    gradeValue = C;
+                    break;
+                case 'D':
+                    gradeValue = D;
+                    break;
+                case 'E':
+                    gradeValue = E;
+                    break;
+                case 'F':
+                    gradeValue = F;
+                    break;
+                default:
+                    document.getElementById('result').innerText = "Invalid grade entered for course " + (i + 1);
+                    return;
+            }
+
+            totalCreditPoints += gradeValue * credit;
+            totalCredits += credit;
+        }
+
+        cgpa = totalCreditPoints / totalCredits;
+        document.getElementById('result').innerText = `Your CGPA is: ${cgpa.toFixed(2)}`;
+    }
+</script>
+
+</body>
+</html>
